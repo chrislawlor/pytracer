@@ -38,3 +38,31 @@ def test_hadamard_product():
     c2 = Color(0.9, 1, 0.1)
     result = c1 * c2
     assert_color_approx_equal(result, Color(0.9, 0.2, 0.04))
+
+
+@pytest.mark.parametrize(
+    ("r", "g", "b", "expected"),
+    # fmt: off
+    (
+        (255, 255, 255, Color(1, 1, 1)),
+        (0, 0, 0, Color(0, 0, 0)),
+        (128, 128, 128, Color(0.502, 0.502, 0.502)),
+    ),
+    # fmt: on
+)
+def test_from_rgb(r, g, b, expected):
+    c = Color.from_rgb(r, g, b)
+    assert_color_approx_equal(c, expected)
+
+
+@pytest.mark.parametrize(
+    ("hex", "expected"),
+    (
+        # fmt: off
+        ("ff00ff", Color(1, 0, 1)),
+        ("112233", Color.from_rgb(17, 34, 51)),
+        # fmt: on
+    ),
+)
+def test_from_hex(hex, expected):
+    assert_color_approx_equal(Color.from_hex(hex), expected)

@@ -11,6 +11,18 @@ class Color:
     green: float
     blue: float
 
+    @classmethod
+    def from_hex(cls, hexcode: str):
+        return cls.from_rgb(
+            red=int(hexcode[:2], 16),
+            green=int(hexcode[2:4], 16),
+            blue=int(hexcode[4:6], 16),
+        )
+
+    @classmethod
+    def from_rgb(cls, red: int, green: int, blue: int):
+        return cls(red=red / 255, green=green / 255, blue=blue / 255)
+
     def __eq__(self, other) -> bool:
         return isinstance(other, Color) and all(
             [self.red == other.red, self.green == other.green, self.blue == other.blue]
