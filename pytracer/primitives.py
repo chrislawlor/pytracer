@@ -1,15 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import isclose, sqrt
+from math import sqrt
 
-EPSILON = 0.0001
+from .utils import approx_equal
 
 number = int | float
-
-
-def approx_equal(first: float, second: float):
-    return isclose(first, second, rel_tol=EPSILON)
 
 
 @dataclass(slots=True, frozen=True)
@@ -97,4 +93,5 @@ class Vector3(FourTuple):
     w: float = 0.0
 
     def __neg__(self) -> Vector3:
+        return Vector3(x=-self.x, y=-self.y, z=-self.z)
         return Vector3(x=-self.x, y=-self.y, z=-self.z)
