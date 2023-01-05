@@ -4,4 +4,4 @@ test:
 lint:
 	isort pytracer
 	ruff --fix pytracer
-	pyre
+	mypy pytracer
