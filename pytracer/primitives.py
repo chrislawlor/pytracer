@@ -94,4 +94,3 @@ class Vector3(FourTuple):
 
     def __neg__(self) -> Vector3:
         return Vector3(x=-self.x, y=-self.y, z=-self.z)
-        return Vector3(x=-self.x, y=-self.y, z=-self.z)
