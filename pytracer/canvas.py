@@ -2,10 +2,10 @@ from .color import Color
 
 
 class Canvas:
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, fill=Color(0, 0, 0)):
         self.width = width
         self.height = height
-        self.pixels: list[Color] = [Color(0, 0, 0) for _ in range(width * height)]
+        self.pixels: list[Color] = [fill for _ in range(width * height)]
 
     def write_pixel(self, x: int, y: int, color: Color) -> None:
         self.pixels[self._index_for_coords(x, y)] = color
