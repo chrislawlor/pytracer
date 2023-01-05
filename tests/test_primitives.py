@@ -2,7 +2,9 @@ from math import sqrt
 
 import pytest
 
-from pytracer.primitives import FourTuple, Point, Vector3, approx_equal
+from pytracer.primitives import FourTuple, Point, Vector3
+
+from .utils import assert_fourtuple_approx_equal
 
 
 def test_point_w_is_one():
@@ -81,14 +83,7 @@ def test_vector_magnitude(x, y, z, expected):
 def test_normalize(x, y, z, expected):
     v = Vector3(x, y, z)
     result = v.normalize()
-    assert all(
-        [
-            approx_equal(result.x, expected.x),
-            approx_equal(result.y, expected.y),
-            approx_equal(result.z, expected.z),
-            approx_equal(result.w, expected.w),
-        ]
-    )
+    assert_fourtuple_approx_equal(result, expected)
 
 
 def test_dot_product():
@@ -100,4 +95,5 @@ def test_dot_product():
 def test_cross_product():
     v1 = Vector3(1, 2, 3)
     v2 = Vector3(2, 3, 4)
+    assert v1.cross_product(v2) == Vector3(-1, 2, -1)
     assert v1.cross_product(v2) == Vector3(-1, 2, -1)

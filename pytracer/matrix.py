@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from functools import cached_property
 
 from .primitives import FourTuple
@@ -29,6 +30,30 @@ class Matrix:
         result = Matrix.with_shape(size, size)
         for i in range(size):
             result[i, i] = 1
+        return result
+
+    @classmethod
+    def translation(cls, x: int | float, y: int | float, z: int | float) -> Matrix:
+        """Create a 4x4 translation Matrix"""
+        result = cls.identity(4)
+        result[0, 3] = x
+        result[1, 3] = y
+        result[2, 3] = z
+        return result
+
+    @classmethod
+    def scaling(cls, x: int | float, y: int | float, z: int | float) -> Matrix:
+        """Create a 4x4 scaling Matrix"""
+        return Matrix([[x, 0, 0, 0], [0, y, 0, 0], [0, 0, z, 0], [0, 0, 0, 1]])
+
+    @classmethod
+    def rotation_x(cls, radians: int | float) -> Matrix:
+        """Create a 4x4 Matrix for rotation around the X axis"""
+        result = Matrix.identity(4)
+        result[1, 1] = math.cos(radians)
+        result[1, 2] = -math.sin(radians)
+        result[2, 1] = math.sin(radians)
+        result[2, 2] = math.cos(radians)
         return result
 
     def transpose(self) -> Matrix:

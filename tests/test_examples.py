@@ -8,4 +8,4 @@ EPSILON = 0.0001
 
 
 def test_assert_almost_equal():
-    assert 2.0 == pytest.approx(1.9999, EPSILON)
+    assert 2.0 == pytest.approx(1.9999, abs=EPSILON)

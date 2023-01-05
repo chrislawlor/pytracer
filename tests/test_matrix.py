@@ -3,15 +3,7 @@ import pytest
 from pytracer.matrix import Matrix
 from pytracer.primitives import FourTuple
 
-EPSILON = 0.0001
-
-
-def assert_approx_equal(m1: Matrix, m2: Matrix):
-    assert m1.width == m2.width
-    assert m2.height == m2.height
-    for row in range(m1.height):
-        for col in range(m1.width):
-            assert m1[row, col] == pytest.approx(m2[row, col], abs=EPSILON)
+from .utils import assert_matrix_approx_equal
 
 
 def test_getitem():
@@ -166,7 +158,7 @@ def test_calculate_the_inverse_of_a_matrix():
     assert B[3, 2] == -160 / 532
     assert B[2, 3] == 105 / 532
 
-    assert_approx_equal(
+    assert_matrix_approx_equal(
         B,
         Matrix(
             [
@@ -202,11 +194,11 @@ def test_calculate_inverse_of_another_matrix():
             # fmt: on
         ]
     )
-    assert_approx_equal(m.inverse(), expected)
+    assert_matrix_approx_equal(m.inverse(), expected)
 
 
 def test_multiply_a_product_by_its_inverse():
     m1 = Matrix([[3, -9, 7, 3], [3, -8, 2, -9], [-4, 4, 4, 1], [-6, 5, -1, 1]])
     m2 = Matrix([[8, 2, 2, 2], [3, -1, 7, 0], [7, 0, 5, 4], [6, -2, 0, 5]])
     m3 = m1 * m2
-    assert_approx_equal(m3 * m2.inverse(), m1)
+    assert_matrix_approx_equal(m3 * m2.inverse(), m1)
