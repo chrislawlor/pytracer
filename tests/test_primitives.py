@@ -12,6 +12,18 @@ def test_point_w_is_one():
     assert p.w == 1.0
 
 
+def test_point_equality_is_approximate():
+    p1 = Point(1, 1, 1)
+    p2 = Point(1.0000001, 0.9999999, 1.0)
+    assert p1 == p2
+
+
+def test_point_equality_is_approximate_near_zero():
+    p1 = Point(0, 0, 0)
+    p2 = Point(0.0000001, -0.0000001, 0.0)
+    assert p1 == p2
+
+
 def test_vector3_w_is_zero():
     v = Vector3(1, 2, 3)
     assert v.w == 0.0

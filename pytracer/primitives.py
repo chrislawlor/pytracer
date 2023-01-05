@@ -77,12 +77,15 @@ class FourTuple:
         )
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True, frozen=True, order=False)
 class Point(FourTuple):
     x: float
     y: float
     z: float
     w: float = 1.0
+
+    def __eq__(self, other) -> bool:
+        return super(Point, self).__eq__(other)
 
 
 @dataclass(slots=True, frozen=True)
@@ -94,3 +97,6 @@ class Vector3(FourTuple):
 
     def __neg__(self) -> Vector3:
         return Vector3(x=-self.x, y=-self.y, z=-self.z)
+
+    def __eq__(self, other) -> bool:
+        return super(Vector3, self).__eq__(other)

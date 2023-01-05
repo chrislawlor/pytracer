@@ -61,3 +61,84 @@ def test_rotatating_a_point_around_the_x_axis():
     )
     result = full_quarter * point
     assert_fourtuple_approx_equal(result, Point(0, 0, 1))
+
+
+def test_rotate_a_point_around_the_y_axis():
+    point = Point(0, 0, 1)
+    half_quarter = Matrix.rotation_y(pi / 4)
+    full_quarter = Matrix.rotation_y(pi / 2)
+    assert_fourtuple_approx_equal(
+        half_quarter * point, Point(sqrt(2) / 2, 0, sqrt(2) / 2)
+    )
+    assert_fourtuple_approx_equal(full_quarter * point, Point(1, 0, 0))
+
+
+def test_rotate_a_point_around_the_z_axis():
+    point = Point(0, 1, 0)
+    half_quarter = Matrix.rotation_z(pi / 4)
+    full_quarter = Matrix.rotation_z(pi / 2)
+    assert_fourtuple_approx_equal(
+        half_quarter * point, Point(-sqrt(2) / 2, sqrt(2) / 2, 0)
+    )
+    assert_fourtuple_approx_equal(full_quarter * point, Point(-1, 0, 0))
+
+
+def test_shearing_transformation_moves_x_in_proportion_to_y():
+    transform = Matrix.shearing(1, 0, 0, 0, 0, 0)
+    point = Point(2, 3, 4)
+    assert transform * point == Point(5, 3, 4)
+
+
+def test_shearing_transformation_moves_x_in_proportion_to_z():
+    transform = Matrix.shearing(0, 1, 0, 0, 0, 0)
+    point = Point(2, 3, 4)
+    assert transform * point == Point(6, 3, 4)
+
+
+def test_shearing_transformation_moves_y_in_proportion_to_x():
+    transform = Matrix.shearing(0, 0, 1, 0, 0, 0)
+    point = Point(2, 3, 4)
+    assert transform * point == Point(2, 5, 4)
+
+
+def test_shearing_transformation_moves_y_in_proportion_to_z():
+    transform = Matrix.shearing(0, 0, 0, 1, 0, 0)
+    point = Point(2, 3, 4)
+    assert transform * point == Point(2, 7, 4)
+
+
+def test_shearing_transformation_moves_z_in_proportion_to_x():
+    transform = Matrix.shearing(0, 0, 0, 0, 1, 0)
+    point = Point(2, 3, 4)
+    assert transform * point == Point(2, 3, 6)
+
+
+def test_shearing_transformation_moves_z_in_proportion_to_y():
+    transform = Matrix.shearing(0, 0, 0, 0, 0, 1)
+    point = Point(2, 3, 4)
+    assert transform * point == Point(2, 3, 7)
+
+
+def test_individual_transformations_applied_in_sequence():
+    point = Point(1, 0, 1)
+    A = Matrix.rotation_x(pi / 2)
+    B = Matrix.scaling(5, 5, 5)
+    C = Matrix.translation(10, 5, 7)
+
+    p2 = A * point
+    assert p2 == Point(1, -1, 0)
+
+    p3 = B * p2
+    assert p3 == Point(5, -5, 0)
+
+    p4 = C * p3
+    assert p4 == Point(15, 0, 7)
+
+
+def test_chained_transformations_must_be_applied_in_reverse_order():
+    point = Point(1, 0, 1)
+    A = Matrix.rotation_x(pi / 2)
+    B = Matrix.scaling(5, 5, 5)
+    C = Matrix.translation(10, 5, 7)
+    T = C * B * A
+    assert T * point == Point(15, 0, 7)

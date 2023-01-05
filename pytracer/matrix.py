@@ -49,12 +49,46 @@ class Matrix:
     @classmethod
     def rotation_x(cls, radians: int | float) -> Matrix:
         """Create a 4x4 Matrix for rotation around the X axis"""
-        result = Matrix.identity(4)
-        result[1, 1] = math.cos(radians)
-        result[1, 2] = -math.sin(radians)
-        result[2, 1] = math.sin(radians)
-        result[2, 2] = math.cos(radians)
-        return result
+        m = Matrix.identity(4)
+        m[1, 1] = math.cos(radians)
+        m[1, 2] = -math.sin(radians)
+        m[2, 1] = math.sin(radians)
+        m[2, 2] = math.cos(radians)
+        return m
+
+    @classmethod
+    def rotation_y(cls, radians: int | float) -> Matrix:
+        """Create a 4x4 Matrix for rotation around the Y axis"""
+        m = Matrix.identity(4)
+        m[0, 0] = math.cos(radians)
+        m[0, 2] = math.sin(radians)
+        m[2, 0] = -math.sin(radians)
+        m[2, 2] = math.cos(radians)
+        return m
+
+    @classmethod
+    def rotation_z(cls, radians: int | float) -> Matrix:
+        """Create a 4x4 Matrix for rotation around the Z axis"""
+        m = Matrix.identity(4)
+        m[0, 0] = math.cos(radians)
+        m[0, 1] = -math.sin(radians)
+        m[1, 0] = math.sin(radians)
+        m[1, 1] = math.cos(radians)
+        return m
+
+    @classmethod
+    def shearing(cls, Xy, Xz, Yx, Yz, Zx, Zy) -> Matrix:
+        """Create a 4x4 shear (skew) matrix"""
+        return Matrix(
+            [
+                # fmt: off
+            [ 1, Xy, Xz, 0],
+            [Yx,  1, Yz, 0],
+            [Zx, Zy,  1, 0],
+            [ 0,  0,  0, 1],
+                # fmt: on
+            ]
+        )
 
     def transpose(self) -> Matrix:
         """
