@@ -43,6 +43,9 @@ class FourTuple:
             w=self.w / magnitude,
         )
 
+    def reflect(self, normal: Vector3) -> Vector3:
+        return self - normal * 2 * self.dot(normal)
+
     def __sub__(self, other: FourTuple) -> FourTuple:
         return self.__class__(
             self.x - other.x, self.y - other.y, self.z - other.z, self.w - other.w

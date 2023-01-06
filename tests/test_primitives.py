@@ -109,3 +109,17 @@ def test_cross_product():
     v2 = Vector3(2, 3, 4)
     assert v1.cross_product(v2) == Vector3(-1, 2, -1)
     assert v1.cross_product(v2) == Vector3(-1, 2, -1)
+
+
+def test_reflect_a_vector_approaching_at_45_deg():
+    v = Vector3(1, -1, 0)
+    n = Vector3(0, 1, 0)
+    r = v.reflect(n)
+    assert r == Vector3(1, 1, 0)
+
+
+def test_reflecting_a_vector_off_a_slanted_surface():
+    v = Vector3(0, -1, 0)
+    n = Vector3(sqrt(2) / 2, sqrt(2) / 2, 0)
+    r = v.reflect(n)
+    assert r == Vector3(1, 0, 0)
