@@ -2,6 +2,8 @@
 
 Ray tracing in Python.
 
+![3d spheroid](examples/screenshots/sphere3d.png)
+
 ## Examples
 
 Examples assume [iTerm](https://iterm2.com/) with [imgcat](https://pypi.org/project/imgcat/) installed.
