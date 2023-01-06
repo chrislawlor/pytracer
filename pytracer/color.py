@@ -48,7 +48,7 @@ class Color:
             blue=self.blue - other.blue,
         )
 
-    def __mul__(self, other: number) -> Color:
+    def __mul__(self, other: number | Color) -> Color:
         if isinstance(other, float | int):
             return Color(
                 red=self.red * other, blue=self.blue * other, green=self.green * other
