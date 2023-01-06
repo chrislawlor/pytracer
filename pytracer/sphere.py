@@ -1,3 +1,4 @@
+from .materials import Material
 from .matrix import Matrix
 from .primitives import Point, Vector3
 
@@ -5,6 +6,7 @@ from .primitives import Point, Vector3
 class Shape:
     def __init__(self):
         self.transform = Matrix.identity(4)
+        self.material = Material.default()
 
 
 class Sphere(Shape):

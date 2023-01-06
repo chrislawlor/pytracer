@@ -79,6 +79,9 @@ class FourTuple:
             x=self.x / scalar, y=self.y / scalar, z=self.z / scalar, w=self.w / scalar
         )
 
+    def __neg__(self) -> FourTuple:
+        return FourTuple(x=-self.x, y=-self.y, z=-self.z, w=self.w)
+
 
 @dataclass(slots=True, frozen=True, order=False)
 class Point(FourTuple):
