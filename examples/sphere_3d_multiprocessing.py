@@ -3,8 +3,9 @@
 """
 
 import argparse
+import concurrent.futures
 import sys
-from typing import Optional
+from typing import Generator, Optional
 
 from pytracer import (
     PPM,
@@ -19,14 +20,34 @@ from pytracer import (
 )
 
 ray_origin = Point(0, 0, -5)
-
-wall_z = 10
 wall_size = 7.0
 
 
-def calculate_pixel_at_world_coords(x, y, wall_z, light, shape) -> Optional[Color]:
+# Multiprocessing state
+
+wall_z = 10
+shape = None
+light = None
+
+
+def init_worker(sphere_color, ambient, diffuse, specular, shininess):
+    global shape
+    global light
+    shape = Sphere()
+    shape.material = Material(
+        color=Color.from_hex(sphere_color),
+        ambient=ambient,
+        diffuse=diffuse,
+        specular=specular,
+        shininess=shininess,
+    )
+    light = PointLight(Point(-10, 10, -10), Color(1, 1, 1))
+
+
+def calculate_pixel_at_world_coords(args) -> tuple[int, int, Optional[Color]]:
+    x, y, world_x, world_y = args
     # describe the point on the wall that the ray will target
-    target = Point(x, y, wall_z)
+    target = Point(world_x, world_y, wall_z)
     r = Ray(ray_origin, (target - ray_origin).normalize())
     xs = r.intersects(shape)
     hit = Intersection.hit(xs)
@@ -34,30 +55,29 @@ def calculate_pixel_at_world_coords(x, y, wall_z, light, shape) -> Optional[Colo
         position = r.position(hit.t)
         normalv = hit.shape.normal_at(position)
         eyev = -r.direction
-        return shape.material.lighting(light, position, eyev, normalv)
-    return None
+        color = shape.material.lighting(light, position, eyev, normalv)
+    else:
+        color = None
+    return (x, y, color)
 
 
-def cast(canvas: Canvas, shape: Sphere) -> Canvas:
-    pixel_size = wall_size / canvas.width  # size of a pixel in world space units
+def generate_worker_args(
+    width: int,
+    height: int,
+) -> Generator[tuple[int, int, float, float], None, None]:
+    pixel_size = wall_size / width  # size of a pixel in world space units
     half = wall_size / 2
     # shape.transform = Matrix.scaling(1, 0.5, 1)
-    light = PointLight(Point(-10, 10, -10), Color(1, 1, 1))
 
-    for y in range(canvas.height):
+    for y in range(height):
         # compute y world coords
         world_y = half - pixel_size * y
 
-        for x in range(canvas.width):
+        for x in range(width):
             # compute x world coords
             world_x = -half + pixel_size * x
 
-            color = calculate_pixel_at_world_coords(
-                world_x, world_y, wall_z, light, shape
-            )
-            if color is not None:
-                canvas.write_pixel(x, y, color)
-    return canvas
+            yield x, y, world_x, world_y
 
 
 def main(
@@ -68,17 +88,29 @@ def main(
     diffuse: float,
     specular: float,
     shininess: float,
+    max_workers=8,
+    chunksize=500,
 ):
     canvas = Canvas(canvas_size, canvas_size, fill=Color.from_hex(canvas_color))
-    shape = Sphere()
-    shape.material = Material(
-        color=Color.from_hex(sphere_color),
-        ambient=ambient,
-        diffuse=diffuse,
-        specular=specular,
-        shininess=shininess,
-    )
-    canvas = cast(canvas, shape)
+
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=max_workers,
+        initializer=init_worker,
+        initargs=(sphere_color, ambient, diffuse, specular, shininess),
+    ) as executor:
+        for x, y, color in executor.map(
+            calculate_pixel_at_world_coords,
+            generate_worker_args(canvas.height, canvas.width),
+            chunksize=chunksize,
+        ):
+            if color is not None:
+                canvas.write_pixel(x, y, color)
+
+    # for x, y, world_x, world_y in generate_worker_args(canvas.width, canvas.height):
+    #     x, y, color = calculate_pixel_at_world_coords(x, y, world_x, world_y)
+    #     if color is not None:
+    #         canvas.write_pixel(x, y, color)
+
     PPM.save(canvas, sys.stdout)
 
 
@@ -110,6 +142,13 @@ if __name__ == "__main__":
         default=50,
         type=float,
         help="Sphere shininess (50-200 work well)",
+    )
+    parser.add_argument("--max-workers", type=int, help="Number of Python processes")
+    parser.add_argument(
+        "--chunksize",
+        type=int,
+        default=500,
+        help="Python process executor task chunksize",
     )
 
     args = parser.parse_args()
