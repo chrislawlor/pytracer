@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from math import sqrt
 from typing import Optional
 
+from .matrix import Matrix
 from .primitives import Point, Vector3
 from .sphere import Shape, Sphere
 
@@ -56,9 +57,10 @@ class Ray:
         returned.
         """
         # We assume our sphere is centered at the origin
-        sphere_to_ray = self.origin - Point(0, 0, 0)
-        a = self.direction.dot(self.direction)
-        b = 2 * self.direction.dot(sphere_to_ray)
+        ray = self.transform(sphere.transform.inverse())
+        sphere_to_ray = ray.origin - Point(0, 0, 0)
+        a = ray.direction.dot(ray.direction)
+        b = 2 * ray.direction.dot(sphere_to_ray)
         c = sphere_to_ray.dot(sphere_to_ray) - 1
         discriminant = b**2 - 4 * a * c
         if discriminant < 0:
@@ -66,3 +68,13 @@ class Ray:
         t1 = (-b - sqrt(discriminant)) / (2 * a)
         t2 = (-b + sqrt(discriminant)) / (2 * a)
         return [Intersection(t=t1, shape=sphere), Intersection(t=t2, shape=sphere)]
+
+    def transform(self, transformation: Matrix) -> Ray:
+        """
+        Transform by the given transformation matrix.
+        Returns a new Ray.
+        """
+        return Ray(
+            origin=transformation * self.origin,
+            direction=transformation * self.direction,
+        )

@@ -1,7 +1,10 @@
+from .matrix import Matrix
+
+
 class Shape:
-    pass
+    def __init__(self):
+        self.transform = Matrix.identity(4)
 
 
 class Sphere(Shape):
-    def __init__(self):
-        pass
+    pass

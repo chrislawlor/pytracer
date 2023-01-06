@@ -1,6 +1,6 @@
 import pytest
 
-from pytracer import Point, Ray, Sphere, Vector3
+from pytracer import Matrix, Point, Ray, Sphere, Vector3
 from pytracer.ray import Intersection
 
 
@@ -100,3 +100,21 @@ def test_hit_is_always_lowest_non_negative_intersection():
     xs = [Intersection(t=t, shape=s) for t in (5, 7, -3, 2)]
     hit = Intersection.hit(xs)
     assert hit.t == 2
+
+
+def test_intersecting_a_scaled_sphere_with_a_ray():
+    r = Ray(Point(0, 0, -5), Vector3(0, 0, 1))
+    s = Sphere()
+    s.transform = Matrix.scaling(2, 2, 2)
+    xs = r.intersects(s)
+    assert len(xs) == 2
+    assert xs[0].t == 3
+    assert xs[1].t == 7
+
+
+def test_intersecting_a_translated_sphere_with_a_ray():
+    r = Ray(Point(0, 0, -5), Vector3(0, 0, 1))
+    s = Sphere()
+    s.transform = Matrix.translation(5, 0, 0)
+    xs = r.intersects(s)
+    assert len(xs) == 0
