@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .utils import approx_equal
+
 number = int | float
 
 
@@ -25,7 +27,11 @@ class Color:
 
     def __eq__(self, other) -> bool:
         return isinstance(other, Color) and all(
-            [self.red == other.red, self.green == other.green, self.blue == other.blue]
+            [
+                approx_equal(self.red, other.red),
+                approx_equal(self.blue, other.blue),
+                approx_equal(self.green, other.green),
+            ]
         )
 
     def __add__(self, other: Color) -> Color:
