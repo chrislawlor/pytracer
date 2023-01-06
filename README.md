@@ -2,7 +2,7 @@
 
 Ray tracing in Python. My implementation of [The Ray Tracer Challenge](https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/) by [Jamis Buck](https://twitter.com/jamis).
 
-![3d spheroid](examples/screenshots/sphere3d.png)
+![3d spheroid](examples/screenshots/sample.png)
 
 ## Examples
 
