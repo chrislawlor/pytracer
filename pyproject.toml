@@ -18,6 +18,7 @@ ipython = "^8.7.0"
 pytest = "^7.2.0"
 pytest-cov = "^4.0.0"
 isort = "^5.11.4"
+ipdb = "^0.13.11"
 
 [tool.isort]
 profile = "black"
