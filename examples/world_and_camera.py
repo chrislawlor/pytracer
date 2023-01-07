@@ -12,6 +12,7 @@ from pytracer import (
     Sphere,
     Vector3,
     World,
+    render,
 )
 
 WALL_COLOR = Color(1, 0.9, 0.9)
@@ -80,7 +81,8 @@ def build_camera(width, height):
 def main(width=100, height=50):
     world = build_world()
     camera = build_camera(width, height)
-    canvas = camera.render(world)
+    canvas = render(camera, world)
+
     PPM.save(canvas, sys.stdout)
 
 

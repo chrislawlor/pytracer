@@ -106,11 +106,6 @@ def main(
             if color is not None:
                 canvas.write_pixel(x, y, color)
 
-    # for x, y, world_x, world_y in generate_worker_args(canvas.width, canvas.height):
-    #     x, y, color = calculate_pixel_at_world_coords(x, y, world_x, world_y)
-    #     if color is not None:
-    #         canvas.write_pixel(x, y, color)
-
     PPM.save(canvas, sys.stdout)
 
 

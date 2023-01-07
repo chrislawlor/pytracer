@@ -7,5 +7,6 @@ from .materials import Material  # noqa
 from .matrix import Matrix  # noqa
 from .primitives import Point, Vector3  # noqa
 from .ray import Intersection, Ray  # noqa
+from .render import render  # noqa
 from .sphere import Sphere  # noqa
 from .world import World  # noqa
