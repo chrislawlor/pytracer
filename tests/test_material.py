@@ -1,16 +1,8 @@
 from math import sqrt
 
-import pytest
 
 from pytracer import Color, Material, Point, Vector3
 from pytracer.light import PointLight
-
-
-@pytest.fixture
-def material():
-    return Material(
-        color=Color(1, 1, 1), ambient=0.1, diffuse=0.9, specular=0.9, shininess=200
-    )
 
 
 def test_lighting_with_the_eye_between_the_light_and_surface(material: Material):

@@ -2,11 +2,13 @@ from .materials import Material
 from .matrix import Matrix
 from .primitives import Point, Vector3
 
+DEFAULT_MATERIAL = Material.default()
+
 
 class Sphere:
-    def __init__(self):
+    def __init__(self, material=DEFAULT_MATERIAL):
         self.transform = Matrix.identity(4)
-        self.material = Material.default()
+        self.material = material
 
     def normal_at(self, point: Point) -> Vector3:
         object_point = self.transform.inverse() * point

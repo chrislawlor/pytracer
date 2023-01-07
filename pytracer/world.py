@@ -4,8 +4,6 @@ from dataclasses import dataclass, field
 
 from .color import Color
 from .light import PointLight
-from .materials import Material
-from .matrix import Matrix
 from .primitives import Point, Vector3
 from .ray import Intersection, Ray
 from .sphere import Sphere
@@ -15,10 +13,6 @@ from .sphere import Sphere
 class World:
     shapes: list[Sphere] = field(default_factory=list)
     lights: list[PointLight] = field(default_factory=list)
-
-    @classmethod
-    def default(cls) -> World:
-        return cls(shapes=cls._default_shapes(), lights=[cls._default_light()])
 
     def color_at(self, ray) -> Color:
         intersections = self.intersect(ray)
@@ -64,27 +58,6 @@ class World:
             )
 
         return color
-
-    @classmethod
-    def _default_shapes(cls) -> list[Sphere]:
-        s1 = Sphere()
-        s1.material = Material(
-            color=Color(0.8, 1.0, 0.6),
-            ambient=0.1,
-            diffuse=0.7,
-            specular=0.2,
-            shininess=50,
-        )
-        s2 = Sphere()
-        s2.material = Material(
-            color=Color(1, 1, 1), ambient=0.1, diffuse=0.9, specular=0.9, shininess=200
-        )
-        s2.transform = Matrix.scaling(0.5, 0.5, 0.5)
-        return [s1, s2]
-
-    @classmethod
-    def _default_light(cls) -> PointLight:
-        return PointLight(position=Point(-10, 10, -10), intensity=Color(1, 1, 1))
 
 
 @dataclass(slots=True)
