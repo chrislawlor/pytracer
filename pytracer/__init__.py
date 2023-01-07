@@ -1,3 +1,4 @@
+from .camera import Camera  # noqa
 from .canvas import Canvas  # noqa
 from .color import Color  # noqa
 from .image import PPM  # noqa
