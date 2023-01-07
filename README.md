@@ -19,3 +19,9 @@ $ poetry run python examples/canvas_to_ppm.py | imgcat
 ```
 
 ![canvas to ppm example](examples/screenshots/canvas_to_ppm.png)
+
+## Acknowledgements
+
+* Ray Tracer Challenge book:<br><a href="https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/"><img src="https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/jbtracer_hu6d5b8b63a4954cb696e89b39f929331b_958829_500x0_resize_q75_box.jpg" width="200"></a>
+
+* Color palette for sample image:<br><a href="https://www.colourlovers.com/palette/1930/cheer_up_emo_kid" target="_blank"><img src="https://www.colourlovers.com/images/badges/p/1/1930_cheer_up_emo_kid.png" style="width: 240px; height: 120px; border: 0 none;" alt="cheer_up_emo_kid" /></a>
