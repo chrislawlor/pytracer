@@ -23,4 +23,8 @@ def assert_matrix_approx_equal(m1: Matrix, m2: Matrix):
     assert m2.height == m2.height
     for row in range(m1.height):
         for col in range(m1.width):
-            assert m1[row, col] == approx(m2[row, col])
+            msg = (
+                f"Matrices differ at [{row}, {col}]: "
+                f"left: {m1[row, col]}, right: {m2[row, col]}"
+            )
+            assert m1[row, col] == approx(m2[row, col]), msg

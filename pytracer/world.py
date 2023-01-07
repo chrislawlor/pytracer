@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from .color import Color
 from .light import PointLight
+from .matrix import Matrix
 from .primitives import Point, Vector3
 from .ray import Intersection, Ray
 from .sphere import Sphere
@@ -58,6 +59,22 @@ class World:
             )
 
         return color
+
+    @classmethod
+    def view_transform(cls, from_: Point, to: Point, up: Vector3):
+        forward = (to - from_).normalize()
+        up = up.normalize()
+        left = forward.cross_product(up)
+        true_up = left.cross_product(forward)
+        orientation = Matrix(
+            [
+                [left.x, left.y, left.z, 0],
+                [true_up.x, true_up.y, true_up.z, 0],
+                [-forward.x, -forward.y, -forward.z, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+        return orientation * Matrix.translation(-from_.x, -from_.y, -from_.z)
 
 
 @dataclass(slots=True)

@@ -1,4 +1,16 @@
-from pytracer import Color, Intersection, Point, PointLight, Ray, Sphere, Vector3, World
+from pytracer import (
+    Color,
+    Intersection,
+    Matrix,
+    Point,
+    PointLight,
+    Ray,
+    Sphere,
+    Vector3,
+    World,
+)
+
+from .utils import assert_matrix_approx_equal
 
 
 def test_intersect_world_with_ray(world: World):
@@ -99,3 +111,54 @@ def test_color_with_an_intersection_behind_the_ray(world):
     color = world.color_at(r)
 
     assert color == inner.material.color
+
+
+def test_transformation_matrix_for_default_orientation():
+    from_ = Point(0, 0, 0)
+    to = Point(0, 0, -1)
+    up = Vector3(0, 1, 0)
+
+    t = World.view_transform(from_, to, up)
+
+    assert t == Matrix.identity(4)
+
+
+def test_view_transform_looking_in_positive_z_direction():
+    from_ = Point(0, 0, 0)
+    to = Point(0, 0, 1)
+    up = Vector3(0, 1, 0)
+
+    t = World.view_transform(from_, to, up)
+
+    assert t == Matrix.scaling(-1, 1, -1)
+
+
+def test_view_transform_moves_the_world():
+    from_ = Point(0, 0, 8)
+    to = Point(0, 0, 0)
+    up = Vector3(0, 1, 0)
+
+    t = World.view_transform(from_, to, up)
+
+    assert t == Matrix.translation(0, 0, -8)
+
+
+def test_an_arbitrary_view_transformation():
+    from_ = Point(1, 3, 2)
+    to = Point(4, -2, 8)
+    up = Vector3(1, 1, 0)
+
+    t = World.view_transform(from_, to, up)
+
+    expected = Matrix(
+        [
+            # fmt: off
+        [-0.50709, 0.50709,  0.67612, -2.36643],
+        [ 0.76772, 0.60609,  0.12122, -2.82843],
+        [-0.35857, 0.59761, -0.71714,  0.00000],
+        [ 0.00000, 0.00000,  0.00000,  1.00000]
+            # fmt: on
+        ]
+    )
+    assert_matrix_approx_equal(t, expected)
+    assert_matrix_approx_equal(t, expected)
