@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import total_ordering
 from math import sqrt
 from typing import Optional
 
@@ -9,6 +10,7 @@ from .primitives import Point, Vector3
 from .sphere import Sphere
 
 
+@total_ordering
 @dataclass(slots=True)
 class Intersection:
     t: float
@@ -32,6 +34,16 @@ class Intersection:
                 else:
                     hit = i
         return hit
+
+    def __gt__(self, other) -> bool:
+        return self.t > other.t
+
+    def __eq__(self, other) -> bool:
+        return (
+            isinstance(other, Intersection)
+            and self.t == other.t
+            and self.shape == other.shape
+        )
 
 
 class Ray:

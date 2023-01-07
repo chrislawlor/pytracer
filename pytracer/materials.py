@@ -28,7 +28,7 @@ class Material:
         position: Point,
         eye_vector: Vector3,
         normal_vector: Vector3,
-    ):
+    ) -> Color:
         # combine surface color with light intensity
         effective_color = self.color * light.intensity
 
@@ -61,6 +61,6 @@ class Material:
                 specular = BLACK
             else:
                 # calculate the specular contribution
-                factor = reflect_dot_eye**self.shininess
+                factor: float = reflect_dot_eye**self.shininess
                 specular = light.intensity * self.specular * factor
         return ambient + diffuse + specular
