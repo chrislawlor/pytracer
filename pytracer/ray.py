@@ -6,13 +6,13 @@ from typing import Optional
 
 from .matrix import Matrix
 from .primitives import Point, Vector3
-from .sphere import Shape, Sphere
+from .sphere import Sphere
 
 
 @dataclass(slots=True)
 class Intersection:
     t: float
-    shape: Shape
+    shape: Sphere
 
     @staticmethod
     def hit(intersections: list[Intersection]) -> Optional[Intersection]:
