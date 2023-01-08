@@ -8,6 +8,7 @@ from .matrix import Matrix
 from .primitives import Point, Vector3
 from .ray import Intersection, Ray
 from .sphere import Sphere
+from .utils import EPSILON
 
 
 @dataclass
@@ -22,6 +23,18 @@ class World:
             return Color(0, 0, 0)
         comps = self.prepare_computations(hit, ray)
         return self.shade_hit(comps)
+
+    def is_shadowed(self, point: Point, light: PointLight) -> bool:
+        v = light.position - point
+        distance = v.magnitude
+        direction = v.normalize()
+
+        r = Ray(point, direction)
+        intersections = self.intersect(r)
+        h = Intersection.hit(intersections)
+        if h and h.t < distance:
+            return True
+        return False
 
     def intersect(self, ray: Ray) -> list[Intersection]:
         """Returns list of Intersections sorted by t"""
@@ -45,6 +58,7 @@ class World:
             t=intersection.t,
             shape=intersection.shape,
             position=position,
+            over_point=position + normalv * EPSILON,
             eyev=eyev,
             normalv=normalv,
             inside=inside,
@@ -54,8 +68,10 @@ class World:
         """Computes color for each light and return the sum"""
         color = Color(0, 0, 0)
         for light in self.lights:
+            is_shadowed = self.is_shadowed(comps.over_point, light)
+
             color += comps.shape.material.lighting(
-                light, comps.position, comps.eyev, comps.normalv
+                light, comps.position, comps.eyev, comps.normalv, in_shadow=is_shadowed
             )
 
         return color
@@ -82,6 +98,7 @@ class Comps:
     t: float
     shape: Sphere
     position: Point
+    over_point: Point
     eyev: Vector3
     normalv: Vector3
     inside: bool = False

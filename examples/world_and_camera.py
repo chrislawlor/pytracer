@@ -67,7 +67,13 @@ def build_shapes():
 
 
 def build_world():
-    return World(shapes=build_shapes(), lights=[PointLight(Point(-10, 10, -10))])
+    return World(
+        shapes=build_shapes(),
+        lights=[
+            PointLight(Point(-10, 10, -10)),
+            PointLight(Point(8, 15, -10), intensity=Color(0.3, 0.3, 0.3)),
+        ],
+    )
 
 
 def build_camera(width, height):

@@ -1,6 +1,5 @@
 from math import sqrt
 
-
 from pytracer import Color, Material, Point, Vector3
 from pytracer.light import PointLight
 
@@ -78,3 +77,14 @@ def test_light_behind_material(material: Material):
     expected_color_val = material.ambient
 
     assert result == Color(expected_color_val, expected_color_val, expected_color_val)
+
+
+def test_lighting_with_the_surface_in_shadow(material: Material):
+    position = Point(0, 0, 0)
+    eyev = Vector3(0, 0, -1)
+    normalv = Vector3(0, 0, -1)
+    light = PointLight(Point(0, 0, -10))
+
+    result = material.lighting(light, position, eyev, normalv, in_shadow=True)
+
+    assert result == Color(0.1, 0.1, 0.1)

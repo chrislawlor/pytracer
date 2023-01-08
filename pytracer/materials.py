@@ -28,6 +28,7 @@ class Material:
         position: Point,
         eye_vector: Vector3,
         normal_vector: Vector3,
+        in_shadow: bool = False,
     ) -> Color:
         # combine surface color with light intensity
         effective_color = self.color * light.intensity
@@ -37,6 +38,8 @@ class Material:
 
         # calculate the ambient contribution
         ambient = effective_color * self.ambient
+        if in_shadow:
+            return ambient
 
         # represents the cos of the angle between the
         # normal vector and the light vector. Negative

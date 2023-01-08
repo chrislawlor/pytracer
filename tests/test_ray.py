@@ -1,7 +1,8 @@
 import pytest
 
-from pytracer import Matrix, Point, Ray, Sphere, Vector3
+from pytracer import Matrix, Point, Ray, Sphere, Vector3, World
 from pytracer.ray import Intersection
+from pytracer.utils import EPSILON
 
 
 def test_creating_and_querying_a_ray():
@@ -118,3 +119,12 @@ def test_intersecting_a_translated_sphere_with_a_ray():
     s.transform = Matrix.translation(5, 0, 0)
     xs = r.intersects(s)
     assert len(xs) == 0
+
+
+def test_the_hit_should_offset_the_point(sphere):
+    r = Ray(Point(0, 0, -5), Vector3(0, 0, 1))
+    sphere.transform = Matrix.translation(0, 0, 1)
+    i = Intersection(5, sphere)
+    comps = World.prepare_computations(i, r)
+    assert comps.over_point.z < -EPSILON / 2
+    assert comps.position.z > comps.over_point.z

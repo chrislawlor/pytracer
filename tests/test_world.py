@@ -1,3 +1,5 @@
+from copy import copy
+
 from pytracer import (
     Color,
     Intersection,
@@ -162,3 +164,38 @@ def test_an_arbitrary_view_transformation():
     )
     assert_matrix_approx_equal(t, expected)
     assert_matrix_approx_equal(t, expected)
+
+
+def test_no_shadow_when_nothing_is_collinear_between_point_and_light(world: World):
+    p = Point(0, 10, 0)
+    assert world.is_shadowed(p, world.lights[0]) is False
+
+
+def test_shadowed_when_obj_is_between_point_and_light(world: World):
+    p = Point(10, -10, 10)
+    assert world.is_shadowed(p, world.lights[0]) is True
+
+
+def test_no_shadow_when_obj_is_behind_the_light(world: World):
+    p = Point(-20, 20, -20)
+    assert world.is_shadowed(p, world.lights[0]) is False
+
+
+def test_no_shadow_when_obj_is_behind_the_point(world: World):
+    p = Point(-2, 2, -2)
+    assert world.is_shadowed(p, world.lights[0]) is False
+
+
+def test_shade_hit_given_an_intersection_in_shadow(world: World):
+    world.lights = [PointLight(Point(0, 0, -10))]
+
+    s1 = world.shapes[0]
+    s2 = copy(s1)
+    s2.material.color = Color(1, 1, 1)
+    s2.transform = Matrix.translation(0, 0, 10)
+    world.shapes.append(s2)
+    r = Ray(Point(0, 0, 5), Vector3(0, 0, 1))
+    i = Intersection(4, s2)
+    comps = world.prepare_computations(i, r)
+    color = world.shade_hit(comps)
+    assert color == Color(0.1, 0.1, 0.1)
