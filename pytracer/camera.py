@@ -26,7 +26,7 @@ class Camera:
                 image.write_pixel(x, y, color)
         return image
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self._half_height: Optional[float] = None
         self._half_width: Optional[float] = None
         self._pixel_size: Optional[float] = None

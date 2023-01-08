@@ -7,13 +7,13 @@ from .light import PointLight
 from .matrix import Matrix
 from .primitives import Point, Vector3
 from .ray import Intersection, Ray
-from .sphere import Sphere
+from .shapes import Shape
 from .utils import EPSILON
 
 
 @dataclass
 class World:
-    shapes: list[Sphere] = field(default_factory=list)
+    shapes: list[Shape] = field(default_factory=list)
     lights: list[PointLight] = field(default_factory=list)
 
     def color_at(self, ray) -> Color:
@@ -96,7 +96,7 @@ class World:
 @dataclass(slots=True)
 class Comps:
     t: float
-    shape: Sphere
+    shape: Shape
     position: Point
     over_point: Point
     eyev: Vector3

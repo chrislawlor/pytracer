@@ -2,19 +2,20 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import total_ordering
-from math import sqrt
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from .matrix import Matrix
 from .primitives import Point, Vector3
-from .sphere import Sphere
+
+if TYPE_CHECKING:
+    from .shapes import Shape
 
 
 @total_ordering
 @dataclass(slots=True)
 class Intersection:
     t: float
-    shape: Sphere
+    shape: Shape
 
     @staticmethod
     def hit(intersections: list[Intersection]) -> Optional[Intersection]:
@@ -57,7 +58,7 @@ class Ray:
         """
         return self.origin + self.direction * t
 
-    def intersects(self, sphere: Sphere) -> list[Intersection]:
+    def intersects(self, shape: Shape) -> list[Intersection]:
         """
         Returns a list of two points t when ray intersects the
         given sphere.
@@ -69,17 +70,9 @@ class Ray:
         returned.
         """
         # We assume our sphere is centered at the origin
-        ray = self.transform(sphere.transform.inverse())
-        sphere_to_ray = ray.origin - Point(0, 0, 0)
-        a = ray.direction.dot(ray.direction)
-        b = 2 * ray.direction.dot(sphere_to_ray)
-        c = sphere_to_ray.dot(sphere_to_ray) - 1
-        discriminant = b**2 - 4 * a * c
-        if discriminant < 0:
-            return []
-        t1 = (-b - sqrt(discriminant)) / (2 * a)
-        t2 = (-b + sqrt(discriminant)) / (2 * a)
-        return [Intersection(t=t1, shape=sphere), Intersection(t=t2, shape=sphere)]
+        ray = self.transform(shape.transform.inverse())
+
+        return shape.local_intersect(ray)
 
     def transform(self, transformation: Matrix) -> Ray:
         """
