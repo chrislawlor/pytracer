@@ -8,6 +8,7 @@ from .materials import Material
 from .matrix import Matrix
 from .primitives import Point, Vector3
 from .ray import Intersection, Ray
+from .utils import EPSILON
 
 
 class Shape(abc.ABC):
@@ -45,3 +46,15 @@ class Sphere(Shape):
         t1 = (-b - sqrt(discriminant)) / (2 * a)
         t2 = (-b + sqrt(discriminant)) / (2 * a)
         return [Intersection(t=t1, shape=self), Intersection(t=t2, shape=self)]
+
+
+class Plane(Shape):
+    def local_intersect(self, local_ray: Ray) -> list[Intersection]:
+        if abs(local_ray.direction.y) < EPSILON:
+            return []
+
+        t = -local_ray.origin.y / local_ray.direction.y
+        return [Intersection(t, self)]
+
+    def normal_at(self, point: Point) -> Vector3:
+        return Vector3(0, 1, 0)

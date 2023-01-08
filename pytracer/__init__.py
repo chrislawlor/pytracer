@@ -8,5 +8,5 @@ from .matrix import Matrix  # noqa
 from .primitives import Point, Vector3  # noqa
 from .ray import Intersection, Ray  # noqa
 from .render import render  # noqa
-from .shapes import Sphere  # noqa
+from .shapes import Plane, Sphere  # noqa
 from .world import World  # noqa
