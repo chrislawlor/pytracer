@@ -49,4 +49,3 @@ def render(camera: Camera, world, num_processes=None) -> Canvas:
             canvas.write_pixel(x, y, color)
 
     return canvas
-    return canvas
