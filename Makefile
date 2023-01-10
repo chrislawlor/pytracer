@@ -1,4 +1,4 @@
-test: lint
+test:
 	pytest --cov=pytracer tests
 
 lint:
