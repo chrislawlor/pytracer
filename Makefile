@@ -2,6 +2,8 @@ test:
 	pytest --cov=pytracer tests
 
 lint:
-	isort pytracer
-	ruff --fix pytracer
-	mypy pytracer
+	pre-commit run --all-files
+
+coverage: test
+	poetry run coverage html
+	open htmlcov/index.html

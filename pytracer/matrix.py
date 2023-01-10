@@ -82,10 +82,10 @@ class Matrix:
         return Matrix(
             [
                 # fmt: off
-            [ 1, Xy, Xz, 0],
-            [Yx,  1, Yz, 0],
-            [Zx, Zy,  1, 0],
-            [ 0,  0,  0, 1],
+                [ 1, Xy, Xz, 0],
+                [Yx,  1, Yz, 0],
+                [Zx, Zy,  1, 0],
+                [ 0,  0,  0, 1],
                 # fmt: on
             ]
         )

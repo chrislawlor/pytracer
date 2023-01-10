@@ -1,0 +1,42 @@
+camera:
+  hsize: 200
+  vsize: 100
+  field_of_view: pi/3
+  view_transform:
+    from: [0, 1, -5]
+    to: [0, 1.1, 0]
+    up: [0, 1, 0]
+
+colors:
+  robinEggBlue:
+    hex: 81d8d0
+
+materials:
+  robinEgg:
+    color: robinEggBlue
+    ambient: 0.1
+    diffuse: 0.9
+    specular: 0.4
+    shininess: 30
+  green:
+    color:
+      rgb: [0, 255, 0]
+    ambient: 0.05
+    diffuse: 0.8
+    specular: 0
+    shininess: 20
+
+shapes:
+  - sphere:
+      material: robinEgg
+      transforms:
+        - scaling: [1, 1.3, 1]
+        - translation: [0, 1, 0]
+  - plane:
+      material: green
+
+lights:
+  - position: [-10, 10, -10]
+  - position: [8, 5, -10]
+    intensity:
+      rgb: [150, 150, 150]

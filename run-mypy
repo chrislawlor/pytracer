@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Run mypy with all dependencies installed
+# Using a script allows us to ignore the
+# list of files that pre-commit passes
+# to hooks
+
+set -o errexit
+
+poetry run mypy pytracer
