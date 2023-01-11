@@ -1,11 +1,19 @@
-from dataclasses import dataclass
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Optional
 
 from .color import Color
 from .light import PointLight
+from .matrix import Matrix
+from .patterns import Pattern
 from .primitives import Point, Vector3
 
 DEFAULT_COLOR = Color.from_hex("FF0066")
 BLACK = Color(0, 0, 0)
+
+if TYPE_CHECKING:
+    from .shapes import Shape  # noqa
 
 
 @dataclass(slots=True)
@@ -15,6 +23,7 @@ class Material:
     diffuse: float
     specular: float
     shininess: float
+    pattern: Optional[Pattern] = field(default=None)
 
     @classmethod
     def default(cls):
@@ -29,9 +38,17 @@ class Material:
         eye_vector: Vector3,
         normal_vector: Vector3,
         in_shadow: bool = False,
+        local_transform: Optional[Matrix] = None,
     ) -> Color:
+
+        if self.pattern:
+            local_transform = local_transform or Matrix.identity(4)
+            color = self.pattern.color_at_local_transform(local_transform, position)
+        else:
+            color = self.color
+
         # combine surface color with light intensity
-        effective_color = self.color * light.intensity
+        effective_color = color * light.intensity
 
         # find the direction to the light source
         lightv = (light.position - position).normalize()

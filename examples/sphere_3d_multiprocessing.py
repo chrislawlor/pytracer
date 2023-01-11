@@ -46,6 +46,8 @@ def init_worker(sphere_color, ambient, diffuse, specular, shininess):
 
 def calculate_pixel_at_world_coords(args) -> tuple[int, int, Optional[Color]]:
     x, y, world_x, world_y = args
+    if shape is None:
+        return (x, y, Color(0, 0, 0))
     # describe the point on the wall that the ray will target
     target = Point(world_x, world_y, wall_z)
     r = Ray(ray_origin, (target - ray_origin).normalize())
@@ -55,7 +57,9 @@ def calculate_pixel_at_world_coords(args) -> tuple[int, int, Optional[Color]]:
         position = r.position(hit.t)
         normalv = hit.shape.normal_at(position)
         eyev = -r.direction
-        color = shape.material.lighting(light, position, eyev, normalv)
+        color = shape.material.lighting(
+            light, position, eyev, normalv, local_transform=shape.transform
+        )
     else:
         color = None
     return (x, y, color)

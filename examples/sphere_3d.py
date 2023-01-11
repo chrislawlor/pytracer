@@ -46,7 +46,9 @@ def cast(canvas: Canvas, shape: Sphere) -> Canvas:
                 position = r.position(hit.t)
                 normalv = hit.shape.normal_at(position)
                 eyev = -r.direction
-                color = shape.material.lighting(light, position, eyev, normalv)
+                color = shape.material.lighting(
+                    light, position, eyev, normalv, local_transform=shape.transform
+                )
                 canvas.write_pixel(x, y, color)
     return canvas
 

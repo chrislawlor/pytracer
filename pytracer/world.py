@@ -71,7 +71,12 @@ class World:
             is_shadowed = self.is_shadowed(comps.over_point, light)
 
             color += comps.shape.material.lighting(
-                light, comps.position, comps.eyev, comps.normalv, in_shadow=is_shadowed
+                light,
+                comps.position,
+                comps.eyev,
+                comps.normalv,
+                in_shadow=is_shadowed,
+                local_transform=comps.shape.transform,
             )
 
         return color

@@ -1,7 +1,6 @@
 from math import sqrt
 
-from pytracer import Color, Material, Point, Vector3
-from pytracer.light import PointLight
+from pytracer import Color, Material, Pattern, Point, PointLight, Vector3
 
 
 def test_lighting_with_the_eye_between_the_light_and_surface(material: Material):
@@ -88,3 +87,21 @@ def test_lighting_with_the_surface_in_shadow(material: Material):
     result = material.lighting(light, position, eyev, normalv, in_shadow=True)
 
     assert result == Color(0.1, 0.1, 0.1)
+
+
+def test_lighting_with_a_pattern_applied():
+    WHITE = Color(1, 1, 1)
+    BLACK = Color(0, 0, 0)
+    pattern = Pattern.stripes(WHITE, BLACK)
+    material = Material(
+        ambient=1, diffuse=0, specular=0, pattern=pattern, color=WHITE, shininess=50
+    )
+    eyev = Vector3(0, 0, -1)
+    normalv = Vector3(0, 0, -1)
+    light = PointLight(Point(0, 0, -10))
+
+    c1 = material.lighting(light, Point(0.9, 0, 0), eyev, normalv)
+    c2 = material.lighting(light, Point(1.1, 0, 0), eyev, normalv)
+
+    assert c1 == WHITE
+    assert c2 == BLACK

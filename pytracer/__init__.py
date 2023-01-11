@@ -5,6 +5,7 @@ from .image import PPM  # noqa
 from .light import PointLight  # noqa
 from .materials import Material  # noqa
 from .matrix import Matrix  # noqa
+from .patterns import Pattern  # noqa
 from .primitives import Point, Vector3  # noqa
 from .ray import Intersection, Ray  # noqa
 from .render import render  # noqa
