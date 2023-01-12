@@ -1,5 +1,8 @@
 import os
+import sys
 from concurrent.futures import ProcessPoolExecutor
+from functools import partial
+from typing import Callable
 
 from pytracer import Camera, Canvas
 
@@ -8,6 +11,34 @@ NUM_PROCESS_ENV_VAR = "PYTRACER_NUM_PROCESSES"
 
 _camera = None
 _world = None
+
+
+def render(camera: Camera, world, num_processes=None, show_progress=True) -> Canvas:
+    if num_processes is None:
+        if NUM_PROCESS_ENV_VAR in os.environ:
+            num_processes = int(os.environ[NUM_PROCESS_ENV_VAR])
+        else:
+            num_processes = os.cpu_count()
+    canvas = Canvas(camera.hsize, camera.vsize)
+    CHUNKSIZE = 500
+
+    tracking_function = get_tracking_function(show_progress)
+
+    with ProcessPoolExecutor(
+        max_workers=num_processes, initializer=init_worker, initargs=(camera, world)
+    ) as executor:
+        for x, y, color in tracking_function(
+            executor.map(
+                worker,
+                generate_pixel_coords(canvas.height, canvas.width),
+                chunksize=CHUNKSIZE,
+            ),
+            total=camera.hsize * camera.vsize,
+            transient=True,
+        ):
+            canvas.write_pixel(x, y, color)
+
+    return canvas
 
 
 def worker(args):
@@ -29,23 +60,23 @@ def generate_pixel_coords(vsize, hsize):
             yield (x, y)
 
 
-def render(camera: Camera, world, num_processes=None) -> Canvas:
-    if num_processes is None:
-        if NUM_PROCESS_ENV_VAR in os.environ:
-            num_processes = int(os.environ[NUM_PROCESS_ENV_VAR])
-        else:
-            num_processes = os.cpu_count()
-    canvas = Canvas(camera.hsize, camera.vsize)
-    CHUNKSIZE = 500
+def _null_tracker(iter, **kwargs):
+    yield from iter
 
-    with ProcessPoolExecutor(
-        max_workers=num_processes, initializer=init_worker, initargs=(camera, world)
-    ) as executor:
-        for x, y, color in executor.map(
-            worker,
-            generate_pixel_coords(canvas.height, canvas.width),
-            chunksize=CHUNKSIZE,
-        ):
-            canvas.write_pixel(x, y, color)
 
-    return canvas
+def get_tracking_function(show_progress: bool) -> Callable:
+    if show_progress is False:
+        return _null_tracker
+
+    try:
+        from rich.console import Console
+        from rich.progress import track
+
+    except ImportError:
+        print(
+            "pytracer CLI dependencies missing. Did you install with -E cli ?",
+            file=sys.stderr,
+        )
+        return _null_tracker
+
+    return partial(track, console=Console(file=sys.stderr))

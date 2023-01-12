@@ -14,15 +14,14 @@ def load_scene_file(filename) -> tuple[Camera, World]:
 
 
 def main(filename, output, num_processes, width, height):
-    # print(f"{filename=}", file=sys.stderr)
-    # print(f"{output=}", file=sys.stderr)
 
     camera, world = load_scene_file(filename)
     if width:
         camera.hsize = width
     if height:
         camera.vsize = height
-    canvas = render(camera, world, num_processes=num_processes)
+
+    canvas = render(camera, world, num_processes=num_processes, show_progress=True)
     try:
         if output is None:
             output = sys.stdout
