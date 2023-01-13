@@ -19,10 +19,11 @@ if TYPE_CHECKING:
 @dataclass(slots=True)
 class Material:
     color: Color
-    ambient: float
-    diffuse: float
-    specular: float
-    shininess: float
+    ambient: float = 0.1
+    diffuse: float = 0.9
+    specular: float = 0.9
+    shininess: float = 50
+    reflective: float = 0.0
     pattern: Optional[Pattern] = field(default=None)
 
     @classmethod

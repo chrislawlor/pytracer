@@ -1,4 +1,5 @@
 from copy import copy
+from math import sqrt
 
 from pytracer import (
     Color,
@@ -11,6 +12,7 @@ from pytracer import (
     Vector3,
     World,
 )
+from pytracer.shapes import Plane
 
 from .utils import assert_matrix_approx_equal
 
@@ -199,3 +201,69 @@ def test_shade_hit_given_an_intersection_in_shadow(world: World):
     comps = world.prepare_computations(i, r)
     color = world.shade_hit(comps)
     assert color == Color(0.1, 0.1, 0.1)
+
+
+def test_precomputing_reflection_vector():
+    shape = Plane()
+    r = Ray(Point(0, 1, -1), Vector3(0, -sqrt(2) / 2, sqrt(2) / 2))
+    i = Intersection(sqrt(2), shape)
+
+    comps = World.prepare_computations(i, r)
+
+    assert comps.reflectv == Vector3(0, sqrt(2) / 2, sqrt(2) / 2)
+
+
+def test_reflective_color_of_non_reflective_material_is_black(world: World):
+    r = Ray(Point(0, 0, 0), Vector3(0, 0, -1))
+    shape = world.shapes[1]
+    shape.material.ambient = 1
+    i = Intersection(1, shape)
+
+    comps = World.prepare_computations(i, r)
+    color = world.reflected_color(comps)
+
+    assert color == Color(0, 0, 0)
+
+
+def test_reflective_color_for_a_reflective_material(world: World):
+    shape = Plane()
+    shape.material.color = Color(1, 1, 1)
+    shape.material.reflective = 0.5
+    shape.transform = Matrix.translation(0, -1, 0)
+    world.shapes.append(shape)
+    r = Ray(Point(0, 0, -3), Vector3(0, -sqrt(2) / 2, sqrt(2) / 2))
+    i = Intersection(sqrt(2), shape)
+    comps = world.prepare_computations(i, r)
+    color = world.reflected_color(comps)
+
+    assert color == Color(0.19032, 0.2379, 0.14274)
+
+
+def test_shade_hit_with_reflective_material(world: World):
+    shape = Plane()
+    shape.material.reflective = 0.5
+    shape.material.color = Color(1, 1, 1)
+    shape.transform = Matrix.translation(0, -1, 0)
+    world.shapes.append(shape)
+    r = Ray(Point(0, 0, -3), Vector3(0, -sqrt(2) / 2, sqrt(2) / 2))
+    i = Intersection(sqrt(2), shape)
+    comps = world.prepare_computations(i, r)
+    color = world.shade_hit(comps)
+    assert color == Color(0.87677, 0.92436, 0.82918)
+
+
+def test_color_at_with_mutually_reflective_surfaces():
+    world = World()
+    world.lights = [PointLight(Point(0, 0, 0))]
+    lower = Plane()
+    lower.material.color = Color(1, 1, 1)
+    lower.material.reflective = 1
+    lower.transform = Matrix.translation(0, -1, 0)
+    upper = Plane()
+    upper.material.color = Color(1, 1, 1)
+    upper.material.reflective = 1
+    upper.transform = Matrix.translation(0, 1, 0)
+    world.shapes = [lower, upper]
+    r = Ray(Point(0, 0, 0), Vector3(0, 1, 0))
+
+    world.color_at(r)  # will blow the stack if infinite recursion isn't handled

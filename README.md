@@ -16,22 +16,28 @@ Before running examples, be sure to install the project:
 $ poetry install
 ```
 
-### Creating a PPM image from a pytracer Canvas
-
+### Render a scene from a YAML file
 
 ```bash
-$ poetry run python examples/canvas_to_ppm.py | imgcat
+pytracer examples/scene_reflection.yaml --width 1600 --height 800 |imgcat
 ```
 
-![canvas to ppm example](examples/screenshots/canvas_to_ppm.png)
+![multiple reflective spheres example](examples/screenshots/reflection.png)
 
 ### World and Camera
 
 ```bash
 $ poetry run python examples/world_and_camera.py | imgcat
 ```
-
 ![world and camera example](examples/screenshots/world_and_camera.png)
+
+### Creating a PPM image from a pytracer Canvas
+
+```bash
+$ poetry run python examples/canvas_to_ppm.py | imgcat
+```
+
+![canvas to ppm example](examples/screenshots/canvas_to_ppm.png)
 
 
 ## Acknowledgements

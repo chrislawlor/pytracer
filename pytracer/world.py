@@ -10,19 +10,23 @@ from .ray import Intersection, Ray
 from .shapes import Shape
 from .utils import EPSILON
 
+MAX_REFLECTIONS = 5
+
 
 @dataclass
 class World:
     shapes: list[Shape] = field(default_factory=list)
     lights: list[PointLight] = field(default_factory=list)
 
-    def color_at(self, ray) -> Color:
+    def color_at(self, ray, remaining=MAX_REFLECTIONS) -> Color:
+        if remaining == 0:
+            return Color(0, 0, 0)
         intersections = self.intersect(ray)
         hit = Intersection.hit(intersections)
         if hit is None:
             return Color(0, 0, 0)
         comps = self.prepare_computations(hit, ray)
-        return self.shade_hit(comps)
+        return self.shade_hit(comps, remaining=remaining)
 
     def is_shadowed(self, point: Point, light: PointLight) -> bool:
         v = light.position - point
@@ -61,10 +65,11 @@ class World:
             over_point=position + normalv * EPSILON,
             eyev=eyev,
             normalv=normalv,
+            reflectv=ray.direction.reflect(normalv),
             inside=inside,
         )
 
-    def shade_hit(self, comps: Comps):
+    def shade_hit(self, comps: Comps, remaining=MAX_REFLECTIONS) -> Color:
         """Computes color for each light and return the sum"""
         color = Color(0, 0, 0)
         for light in self.lights:
@@ -79,7 +84,17 @@ class World:
                 local_transform=comps.shape.transform,
             )
 
+            color += self.reflected_color(comps, remaining=remaining)
+
         return color
+
+    def reflected_color(self, comps: Comps, remaining=MAX_REFLECTIONS) -> Color:
+        if comps.shape.material.reflective == 0:
+            return Color(0, 0, 0)
+
+        reflect_ray = Ray(comps.over_point, comps.reflectv)
+        color = self.color_at(reflect_ray, remaining=remaining - 1)
+        return color * comps.shape.material.reflective
 
     @classmethod
     def view_transform(cls, from_: Point, to: Point, up: Vector3):
@@ -106,4 +121,5 @@ class Comps:
     over_point: Point
     eyev: Vector3
     normalv: Vector3
+    reflectv: Vector3
     inside: bool = False

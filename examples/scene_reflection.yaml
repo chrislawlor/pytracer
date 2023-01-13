@@ -1,0 +1,86 @@
+# Colors from https://www.colourlovers.com/palette/131576/Maddening_Caravan
+
+materials:
+  blackMirror:
+    color:
+      rgb: [30, 30, 30]
+    reflective: 1
+    ambient: 0
+  mirror:
+    color:
+      hex: ffffff
+    reflective: 1
+    ambient: 0
+  yamabuki:
+    color:
+      hex: FF9C5B
+    reflective: 0.4
+    shininess: 100
+  manicCraving:
+    color:
+      hex: F5634A
+    reflective: 0.4
+    shininess: 100
+  whatIBelieve:
+    color:
+      hex: ED303C
+    reflective: 0.4
+    shininess: 100
+  managedArm:
+    color:
+      hex: 3B8183
+    reflective: 0.4
+    shininess: 100
+
+shapes:
+  - plane:
+      material: blackMirror
+      transforms:
+        - translation: [0, -1, 0]
+  - sphere:
+      material: blackMirror
+
+  - sphere:
+      material: whatIBelieve
+      transforms:
+        - translation: [0, 0, 2.5]
+  - sphere:
+      material: manicCraving
+      transforms:
+        - translation: [0, 0, -2.5]
+  - sphere:
+      material: managedArm
+      transforms:
+        - translation: [2.5, 0, 0]
+  - sphere:
+      material: yamabuki
+      transforms:
+        - translation: [-2.5, 0, 0]
+  - sphere:
+      material: mirror
+      transforms:
+        - translation: [2.5, 0, 2.5]
+  - sphere:
+      material: mirror
+      transforms:
+        - translation: [2.5, 0, -2.5]
+  - sphere:
+      material: mirror
+      transforms:
+        - translation: [-2.5, 0, 2.5]
+  - sphere:
+      material: mirror
+      transforms:
+        - translation: [-2.5, 0, -2.5]
+
+lights:
+  - position: [-10, 10, -10]
+
+camera:
+  hsize: 200
+  vsize: 100
+  field_of_view: pi/4
+  view_transform:
+    from: [0, 5, -10]
+    to: [0, -0.5, 0]
+    up: [0, 1, 0]
