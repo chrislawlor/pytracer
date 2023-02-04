@@ -3,7 +3,7 @@ import pytest
 from pytracer.matrix import Matrix
 from pytracer.primitives import FourTuple
 
-from .utils import assert_matrix_approx_equal
+from .utils import approx, assert_matrix_approx_equal
 
 
 def test_getitem():
@@ -97,33 +97,33 @@ def test_submatrix_of_4x4_matrix_is_a_3x3_matrix():
 def test_calculate_minor_of_3x3_matrix():
     m = Matrix([[3, 5, 0], [2, -1, -7], [6, -1, 5]])
     submatrix = m.submatrix(1, 0)
-    assert submatrix.determinant == 25
-    assert m.minor(1, 0) == 25
+    assert submatrix.determinant == approx(25)
+    assert m.minor(1, 0) == approx(25)
 
 
 def test_calculate_cofactor_of_3x3_matrix():
     m = Matrix([[3, 5, 0], [2, -1, -7], [6, -1, 5]])
     assert m.minor(0, 0) == -12
     assert m.cofactor(0, 0) == -12
-    assert m.minor(1, 0) == 25
-    assert m.cofactor(1, 0) == -25
+    assert m.minor(1, 0) == approx(25)
+    assert m.cofactor(1, 0) == approx(-25)
 
 
 def test_calculate_determinant_of_3x3_matrix():
     m = Matrix([[1, 2, 6], [-5, 8, -4], [2, 6, 4]])
-    assert m.cofactor(0, 0) == 56
-    assert m.cofactor(0, 1) == 12
+    assert m.cofactor(0, 0) == approx(56)
+    assert m.cofactor(0, 1) == approx(12)
     assert m.cofactor(0, 2) == -46
-    assert m.determinant == -196
+    assert m.determinant == approx(-196)
 
 
 def test_calculate_determinant_of_4x4_matrix():
     m = Matrix([[-2, -8, 3, 5], [-3, 1, 7, 3], [1, 2, -9, 6], [-6, 7, 7, -9]])
-    assert m.cofactor(0, 0) == 690
-    assert m.cofactor(0, 1) == 447
-    assert m.cofactor(0, 2) == 210
-    assert m.cofactor(0, 3) == 51
-    assert m.determinant == -4071
+    assert m.cofactor(0, 0) == approx(690)
+    assert m.cofactor(0, 1) == approx(447)
+    assert m.cofactor(0, 2) == approx(210)
+    assert m.cofactor(0, 3) == approx(51)
+    assert m.determinant == approx(-4071)
 
 
 def test_an_invertible_matrix_for_invertibility():
@@ -150,13 +150,13 @@ def test_calculate_the_inverse_of_a_matrix():
         ]
     )
 
-    assert A.determinant == 532
-    assert A.cofactor(2, 3) == -160
-    assert A.cofactor(3, 2) == 105
+    assert A.determinant == approx(532)
+    assert A.cofactor(2, 3) == approx(-160)
+    assert A.cofactor(3, 2) == approx(105)
 
     B = A.inverse()
-    assert B[3, 2] == -160 / 532
-    assert B[2, 3] == 105 / 532
+    assert B[3, 2] == approx(-160 / 532)
+    assert B[2, 3] == approx(105 / 532)
 
     assert_matrix_approx_equal(
         B,

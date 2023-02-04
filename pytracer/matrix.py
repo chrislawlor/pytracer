@@ -3,21 +3,29 @@ from __future__ import annotations
 import math
 from functools import cached_property
 
+import numpy as np
+
 from .primitives import FourTuple
 
 
 class Matrix:
     def __init__(self, cells: list[list[float | int]]):
-        self.cells = cells
+        self.cells = np.array(cells, dtype=np.float64)
         if cells:
             width = len(cells[0])
             if not all([len(row) == width for row in cells]):
                 raise ValueError(f" Cells have uneven rows: {cells}")
-            self.width = len(cells[0])
-            self.height = len(cells)
+            self.height, self.width = self.cells.shape
         else:
             self.width = 0
             self.height = 0
+
+    @classmethod
+    def from_np_array(cls, cells: np.ndarray) -> Matrix:
+        m = Matrix([])
+        m.cells = cells
+        m.height, m.width = cells.shape
+        return m
 
     @classmethod
     def with_shape(cls, width: int, height: int, fill: int | float = 0) -> Matrix:
@@ -94,34 +102,21 @@ class Matrix:
         """
         Transpose, return a new Matrix.
         """
-        result = Matrix.with_shape(self.width, self.height)
-        for row in range(self.height):
-            for col in range(self.width):
-                result[row, col] = self[col, row]
-        return result
+        return Matrix.from_np_array(np.transpose(self.cells))
 
     @cached_property
     def determinant(self) -> float:
         """Calculate the determinant"""
-        if self.width == 2 and self.height == 2:
-            return self[0, 0] * self[1, 1] - self[0, 1] * self[1, 0]
-
-        return sum([self[0, col] * self.cofactor(0, col) for col in range(self.width)])
+        return np.linalg.det(self.cells)
 
     def submatrix(self, row: int, col: int) -> Matrix:
         """
         Return a new submatrix of this matrix, with the given
         row and col removed
         """
-        cells = []
-        for row_i in range(self.height):
-            if row_i != row:
-                new_row = []
-                for col_i in range(self.width):
-                    if col_i != col:
-                        new_row.append(self[row_i, col_i])
-                cells.append(new_row)
-        return Matrix(cells)
+        cells = np.delete(self.cells, col, 1)
+        cells = np.delete(cells, row, 0)
+        return Matrix.from_np_array(cells)
 
     def minor(self, row: int, col: int) -> float:
         """
@@ -142,18 +137,9 @@ class Matrix:
 
     def inverse(self) -> Matrix:
         """Return the inverse of this matrix"""
-        if not self.is_invertible():
-            raise ValueError(f"Matrix is not invertible: {self}")
-        result = Matrix.with_shape(self.width, self.height)
-
-        for row in range(self.height):
-            for col in range(self.width):
-                c = self.cofactor(row, col)
-
-                # Note: "col, row" here, instead of "row, col",
-                # accomplishes the transpose operation
-                result[col, row] = c / self.determinant
-        return result
+        # if not self.is_invertible():
+        #     raise ValueError(f"Matrix is not invertible: {self}")
+        return Matrix.from_np_array(np.linalg.inv(self.cells))
 
     def __getitem__(self, key: tuple[int, int]) -> float | int:
         col, row = key
@@ -168,7 +154,7 @@ class Matrix:
             isinstance(other, Matrix)
             and self.width == other.width
             and self.height == other.height
-            and self.cells == other.cells
+            and (self.cells == other.cells).all()
         )
 
     def __mul__(self, other: Matrix | FourTuple):
@@ -185,16 +171,10 @@ class Matrix:
                 "to height of the second"
             )
 
-        result = self.with_shape(other.width, other.height)
-        for row in range(other.height):
-            for col in range(other.width):
-                result[row, col] = sum(
-                    [self[row, i] * other[i, col] for i in range(self.width)]
-                )
-        return result
+        return Matrix.from_np_array(self.cells @ other.cells)
 
     def _mul_tuple(self, other: FourTuple) -> FourTuple:
-        result = self * Matrix([[other.x], [other.y], [other.z], [other.w]])
+        result = self._mul_matrix(Matrix([[other.x], [other.y], [other.z], [other.w]]))
         return FourTuple(*[c[0] for c in result.cells])
 
     def __repr__(self) -> str:
