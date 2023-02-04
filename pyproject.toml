@@ -24,6 +24,7 @@ pytest-cov = "^4.0.0"
 isort = "^5.11.4"
 ipdb = "^0.13.11"
 types-pyyaml = "^6.0.12.2"
+snakeviz = "^2.1.1"
 
 
 [tool.poetry.group.extras.dependencies]

@@ -1,3 +1,6 @@
+pytracer.profile
+*.ppm
+
 # Editor stuff
 .vscode
 
