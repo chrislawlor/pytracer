@@ -24,19 +24,29 @@ def render(camera: Camera, world, num_processes=None, show_progress=True) -> Can
 
     tracking_function = get_tracking_function(show_progress)
 
-    with ProcessPoolExecutor(
-        max_workers=num_processes, initializer=init_worker, initargs=(camera, world)
-    ) as executor:
+    if num_processes == 1:
+        init_worker(camera, world)
         for x, y, color in tracking_function(
-            executor.map(
-                worker,
-                generate_pixel_coords(canvas.height, canvas.width),
-                chunksize=CHUNKSIZE,
-            ),
-            total=camera.hsize * camera.vsize,
+            map(worker, generate_pixel_coords(canvas.height, canvas.width)),
+            total=camera.hsize + camera.vsize,
             transient=True,
         ):
             canvas.write_pixel(x, y, color)
+    else:
+
+        with ProcessPoolExecutor(
+            max_workers=num_processes, initializer=init_worker, initargs=(camera, world)
+        ) as executor:
+            for x, y, color in tracking_function(
+                executor.map(
+                    worker,
+                    generate_pixel_coords(canvas.height, canvas.width),
+                    chunksize=CHUNKSIZE,
+                ),
+                total=camera.hsize * camera.vsize,
+                transient=True,
+            ):
+                canvas.write_pixel(x, y, color)
 
     return canvas
 

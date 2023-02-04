@@ -199,4 +199,3 @@ class Matrix:
 
     def __repr__(self) -> str:
         return f"Matrix({self.cells})"
-        return f"Matrix({self.cells})"
