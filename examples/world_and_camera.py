@@ -84,10 +84,10 @@ def build_camera(width, height):
     return c
 
 
-def main(width=100, height=50):
+def main(width=100, height=50, num_processes=None):
     world = build_world()
     camera = build_camera(width, height)
-    canvas = render(camera, world)
+    canvas = render(camera, world, num_processes=num_processes)
 
     PPM.save(canvas, sys.stdout)
 
@@ -96,6 +96,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--width", type=int, default=100)
     parser.add_argument("--height", type=int, default=50)
+    parser.add_argument("-n", "--num-processes", type=int)
     args = parser.parse_args()
 
     main(**args.__dict__)
