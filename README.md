@@ -24,6 +24,14 @@ pytracer examples/scene_reflection.yaml --width 1600 --height 800 |imgcat
 
 ![multiple reflective spheres example](examples/screenshots/reflection.png)
 
+### Transparency
+
+```bash
+pytracer examples/transparency.yaml --width 1000 --height 500 | imgcat
+```
+
+![transparency example](examples/screenshots/transparency.png)
+
 ### World and Camera
 
 ```bash
