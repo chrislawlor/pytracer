@@ -15,11 +15,14 @@ class Color:
 
     @classmethod
     def from_hex(cls, hexcode: str):
-        return cls.from_rgb(
-            red=int(hexcode[:2], 16),
-            green=int(hexcode[2:4], 16),
-            blue=int(hexcode[4:6], 16),
-        )
+        try:
+            return cls.from_rgb(
+                red=int(hexcode[:2], 16),
+                green=int(hexcode[2:4], 16),
+                blue=int(hexcode[4:6], 16),
+            )
+        except TypeError:
+            raise TypeError(f"Expected a string, but got {type(hexcode)}")
 
     @classmethod
     def from_rgb(cls, red: int, green: int, blue: int):

@@ -1,0 +1,115 @@
+materials:
+  glass:
+    color:
+      hex: "050505"
+    transparency: 1.0
+    refractive_index: 1.52
+    reflective: 1
+    ambient: 0
+    specular: 1
+    diffuse: 0.02
+    shininess: 300
+
+  air:
+    color:
+      hex: "000000"
+    transparency: 1.0
+    refractive_index: 1.0
+    ambient: 0
+    specular: 0
+    diffuse: 0
+    shininess: 0
+
+  yamabuki:
+    color:
+      hex: FF9C5B
+    ambient: 0.4
+    specular: 0.2
+    shininess: 50
+
+  yamabuki-glass:
+    color:
+      hex: "803300"
+    ambient: 0.2
+    specular: 1
+    diffuse: 0.6
+    shininess: 300
+    transparency: 0.98
+    refractive_index: 1.52
+    reflective: 0.9
+
+  floor:
+    color:
+      hex: "556270"
+    reflective: 0
+    ambient: 0.6
+    diffuse: 0.8
+    specular: 0.8
+
+  wall:
+    color:
+      hex: "4ECDC4"
+    reflective: 0
+    ambient: 0.8
+
+shapes:
+  - sphere:
+      material: glass
+      # material: yamabuki
+      transforms:
+        - scaling: [2, 2, 2]
+        - translation: [0, 0, 0]
+
+  - sphere:
+      material: air
+      transforms:
+        - scaling: [1.85, 1.85, 1.85]
+
+  - sphere:
+      material: yamabuki-glass
+      transforms:
+        - translation: [-2, -0.5, -2]
+
+  - sphere:
+      material: yamabuki
+      transforms:
+        - translation: [2, 0, -2]
+
+  - sphere:
+      material: yamabuki
+      transforms:
+        - translation: [2, 0, 0]
+
+  - sphere:
+      material: yamabuki
+      transforms:
+        - translation: [2, 0, 2]
+
+  - sphere:
+      material: yamabuki-glass
+      transforms:
+        - translation: [-2, -0.5, 2]
+
+  - plane:
+      material: floor
+      transforms:
+        - translation: [0, -2, 0]
+
+  - plane:
+      material: wall
+      transforms:
+        - rotation_z: pi/2
+        - translation: [10, 0, 0]
+
+lights:
+  - position: [-12, 6, -8]
+  # - position: [-12, 2, 4]
+
+camera:
+  vsize: 100
+  hsize: 200
+  field_of_view: pi/3
+  view_transform:
+    from: [-10, 0.6, 0]
+    to: [0, 0.1, 0]
+    up: [0, 1, 0]

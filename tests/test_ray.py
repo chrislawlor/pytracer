@@ -1,8 +1,25 @@
+from math import sqrt
+
 import pytest
 
-from pytracer import Matrix, Point, Ray, Sphere, Vector3, World
+from pytracer import Color, Material, Matrix, Point, Ray, Sphere, Vector3, World
 from pytracer.ray import Intersection
 from pytracer.utils import EPSILON
+
+from .utils import approx
+
+
+def glass_sphere(refractive_index=1.5) -> Sphere:
+    material = Material(
+        color=Color(1, 1, 1),
+        ambient=0.1,
+        diffuse=0.9,
+        specular=0.9,
+        shininess=200,
+        transparency=1.0,
+        refractive_index=refractive_index,
+    )
+    return Sphere(material=material)
 
 
 def test_creating_and_querying_a_ray():
@@ -128,3 +145,80 @@ def test_the_hit_should_offset_the_point(sphere):
     comps = World.prepare_computations(i, r)
     assert comps.over_point.z < -EPSILON / 2
     assert comps.position.z > comps.over_point.z
+
+
+def test_under_point_is_offset_below_the_surface():
+    r = Ray(Point(0, 0, -5), Vector3(0, 0, 1))
+    shape = glass_sphere()
+    shape.transform = Matrix.translation(0, 0, 1)
+    i = Intersection(5, shape)
+    xs = [i]
+
+    comps = World.prepare_computations(i, r, xs)
+
+    assert comps.under_point.z > EPSILON / 2
+    assert comps.position.z < comps.under_point.z
+
+
+@pytest.mark.parametrize(
+    ("intersection_idx", "n1", "n2"),
+    (
+        (0, 1.0, 1.5),
+        (1, 1.5, 2.0),
+        (2, 2.0, 2.5),
+        (3, 2.5, 2.5),
+        (4, 2.5, 1.5),
+        (5, 1.5, 1.0),
+    ),
+)
+def test_finding_n1_and_n2_at_various_intersections(intersection_idx, n1, n2):
+    A = glass_sphere(refractive_index=1.5)
+    A.transform = Matrix.scaling(2, 2, 2)
+
+    B = glass_sphere(refractive_index=2.0)
+    B.transform = Matrix.translation(0, 0, -0.25)
+
+    C = glass_sphere(refractive_index=2.5)
+    C.transform = Matrix.translation(0, 0, 0.25)
+
+    r = Ray(Point(0, 0, -4), Vector3(0, 0, 1))
+    xs = [
+        Intersection(2, A),
+        Intersection(2.75, B),
+        Intersection(3.25, C),
+        Intersection(4.75, B),
+        Intersection(5.25, C),
+        Intersection(6, A),
+    ]
+
+    comps = World.prepare_computations(xs[intersection_idx], r, xs)
+
+    assert comps.n1 == n1
+    assert comps.n2 == n2
+
+
+def test_the_schlick_approximation_under_total_internal_reflaction():
+    shape = glass_sphere()
+    r = Ray(Point(0, 0, sqrt(2) / 2), Vector3(0, 1, 0))
+    xs = [Intersection(-sqrt(2) / 2, shape), Intersection(sqrt(2) / 2, shape)]
+    comps = World.prepare_computations(xs[1], r, xs)
+    reflectance = World.schlick(comps)
+    assert reflectance == 1.0
+
+
+def test_the_schlick_approximation_with_a_perpendicular_viewing_angle():
+    shape = glass_sphere()
+    r = Ray(Point(0, 0, 0), Vector3(0, 1, 0))
+    xs = [Intersection(-1, shape), Intersection(1, shape)]
+    comps = World.prepare_computations(xs[1], r, xs)
+    reflectance = World.schlick(comps)
+    assert reflectance == approx(0.04)
+
+
+def test_the_schick_approximation_with_small_angle_and_n2_gt_n1():
+    shape = glass_sphere()
+    r = Ray(Point(0, 0.99, -2), Vector3(0, 0, 1))
+    xs = [Intersection(1.8589, shape)]
+    comps = World.prepare_computations(xs[0], r, xs)
+    reflectance = World.schlick(comps)
+    assert reflectance == approx(0.48873)

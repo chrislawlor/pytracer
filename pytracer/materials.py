@@ -16,6 +16,14 @@ if TYPE_CHECKING:
     from .shapes import Shape  # noqa
 
 
+class Refraction:
+    VACUUM = 1.0
+    AIR = 1.00029
+    WATER = 1.33
+    GLASS = 1.52
+    DIAMOND = 2.417
+
+
 @dataclass(slots=True)
 class Material:
     color: Color
@@ -24,6 +32,8 @@ class Material:
     specular: float = 0.9
     shininess: float = 50
     reflective: float = 0.0
+    transparency: float = 0.0
+    refractive_index: float = 1.0
     pattern: Optional[Pattern] = field(default=None)
 
     @classmethod

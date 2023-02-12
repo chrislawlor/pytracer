@@ -21,6 +21,9 @@ materials:
       hex: F5634A
     reflective: 0.4
     shininess: 100
+    transparency: 1.0
+    refractive_index: 1.5
+    ambient: 0.0
   whatIBelieve:
     color:
       hex: ED303C
@@ -40,10 +43,10 @@ shapes:
   - sphere:
       material: blackMirror
 
-  - sphere:
-      material: whatIBelieve
-      transforms:
-        - translation: [0, 0, 2.5]
+  # - sphere:
+  #     material: whatIBelieve
+  #     transforms:
+  #       - translation: [0, 0, 2.5]
   - sphere:
       material: manicCraving
       transforms:
@@ -56,18 +59,18 @@ shapes:
       material: yamabuki
       transforms:
         - translation: [-2.5, 0, 0]
-  - sphere:
-      material: mirror
-      transforms:
-        - translation: [2.5, 0, 2.5]
+  # - sphere:
+  #     material: mirror
+  #     transforms:
+  #       - translation: [2.5, 0, 2.5]
   - sphere:
       material: mirror
       transforms:
         - translation: [2.5, 0, -2.5]
-  - sphere:
-      material: mirror
-      transforms:
-        - translation: [-2.5, 0, 2.5]
+  # - sphere:
+  #     material: mirror
+  #     transforms:
+  #       - translation: [-2.5, 0, 2.5]
   - sphere:
       material: mirror
       transforms:

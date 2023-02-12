@@ -1,0 +1,46 @@
+materials:
+  yamabuki:
+    color:
+      hex: FF9C5B
+    reflective: 0.5
+  glass:
+    color:
+      hex: ffffff
+    transparency: 1.0
+    refractive_index: 1.52
+    reflective: 0
+    ambient: 0
+    specular: 0.3
+    diffuse: 0
+
+shapes:
+  - sphere:
+      material: yamabuki
+  - sphere:
+      material: glass
+      transforms:
+        - scaling: [2, 2, 2]
+  # - plane:
+  #     material:
+  #       color:
+  #         rgb: [1, 1, 1]
+  #       ambient: 1
+  - sphere:
+      material:
+        color:
+          rgb: [255, 255, 255]
+      transforms:
+        - translation: [0, -2, 0]
+        - scaling: [20, 0.5, 20]
+
+lights:
+  # - position: [0, 20, 0]
+  - position: [-10, 3, -10]
+camera:
+  vsize: 100
+  hsize: 100
+  field_of_view: pi/4
+  view_transform:
+    from: [0, 5, 0]
+    to: [0, 0, 0]
+    up: [0, 0, 1]

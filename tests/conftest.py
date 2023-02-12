@@ -18,6 +18,15 @@ def sphere(material):
 
 
 @pytest.fixture
+def glass_sphere(material) -> Sphere:
+    s = Sphere(material=material)
+    s.material
+    s.material.transparency = 1.0
+    s.material.refractive_index = 1.5
+    return s
+
+
+@pytest.fixture
 def world(sphere):
     s1 = sphere
     s2 = copy(s1)
