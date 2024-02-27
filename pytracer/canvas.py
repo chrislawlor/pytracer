@@ -1,6 +1,16 @@
 from .color import Color
 
 
+class DummyPoint:
+    """
+    Adding this to see how Coveralls reports on new, untested code.
+    """
+
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+
+
 class Canvas:
     def __init__(self, width: int, height: int, fill=Color(0, 0, 0)):
         self.width = width
