@@ -1,5 +1,5 @@
 test:
-	pytest --cov=pytracer tests
+	pytest --cov=pytracer -vv tests
 
 lint:
 	pre-commit run --all-files
